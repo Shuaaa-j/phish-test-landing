@@ -71,11 +71,10 @@
   - The email link that brought the user here should include a token parameter, e.g.:
       https://training.example/welcome?token=abc123
   - This script reads the token and appends it to your consent form URL plus the user's choice (yes/no).
-  - Replace the two URLs below with your actual consent form and training URLs.
 */
 
-const CONSENT_FORM_URL = "https://docs.google.com/forms/d/1lK42ybDd7658p5LMppLVRqSROHsLvwj6h4UcuTmgXww/edit"; // <-- replace with your form URL
-const TRAINING_URL = "https://www.cisa.gov/topics/cybersecurity-best-practices"; // <-- replace with your training URL
+const CONSENT_FORM_URL = "https://docs.google.com/forms/d/1lK42ybDd7658p5LMppLVRqSROHsLvwj6h4UcuTmgXww/edit";
+const TRAINING_URL = "https://www.cisa.gov/topics/cybersecurity-best-practices"; 
 
 function getQueryParam(name) {
   const params = new URLSearchParams(window.location.search);
