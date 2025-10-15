@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Security Awareness — Simulation Result</title>
+<style>
+  :root { --accent:#2b7cff; --muted:#666; --card:#f6f8fc; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:#fff; color:#111; padding:28px; display:flex; justify-content:center; }
+  .wrap { max-width:760px; width:100%; }
+  header { border-left:6px solid var(--accent); padding-left:14px; margin-bottom:18px; }
+  h1 { margin:0; font-size:1.5rem; }
+  .card { background:var(--card); padding:20px; border-radius:10px; box-shadow:0 6px 20px rgba(23,37,84,0.04); }
+  .muted { color:var(--muted); font-size:0.95rem; }
+  .token { margin:12px 0; padding:10px 12px; background:white; border-radius:8px; border:1px dashed #d6dbe8; font-family:monospace; display:inline-block; }
+  .tips { margin-top:12px; }
+  ul { margin:8px 0 0 18px; }
+  .actions { display:flex; gap:12px; margin-top:18px; flex-wrap:wrap; }
+  .btn { padding:12px 16px; border-radius:10px; text-decoration:none; font-weight:600; display:inline-block; }
+  .yes { background:var(--accent); color:#fff; }
+  .no { background:white; border:1px solid #d6dbe8; color:#111; }
+  .small { font-size:0.9rem; color:var(--muted); margin-top:10px; }
+  footer { margin-top:18px; color:var(--muted); font-size:0.9rem; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Security simulation — educational result</h1>
+    </header>
+
+    <section class="card" id="mainCard" aria-live="polite">
+      <p><strong>You were part of an authorised phishing simulation.</strong> No systems were harmed and no credentials were collected. This page is purely educational.</p>
+
+      <p class="muted">We recorded that you reached this page. To help our training and reporting, you can consent to allow the data from this click to be used for research and training.</p>
+
+      <div>
+        <div><strong>Your test token (reference):</strong></div>
+        <div class="token" id="tokenDisplay">Loading…</div>
+      </div>
+
+      <div class="tips">
+        <strong>Quick tips to stay safe online:</strong>
+        <ul>
+          <li>Check the sender’s full email address (display names can be faked).</li>
+          <li>Hover (or long-press) links to see the real destination before clicking.</li>
+          <li>If an email asks for sensitive information, do not enter it — sign in from the official site manually instead.</li>
+        </ul>
+      </div>
+
+      <div class="actions">
+        <!-- These buttons open the consent form in a new tab, with token & choice appended -->
+        <a id="yesBtn" class="btn yes" target="_blank" rel="noopener">Yes — you may use my data</a>
+        <a id="noBtn" class="btn no" target="_blank" rel="noopener">No — do not use my data</a>
+        <a id="trainBtn" class="btn" href="#" target="_blank" rel="noopener">Start 10-min training</a>
+      </div>
+
+      <div class="small">
+        By clicking either option you will be taken to an external consent form. The token will be appended so we can match responses to click events for reporting. You may change your mind later by contacting security@yourorg.example.
+      </div>
+
+      <footer>
+        If you believe you reached this page in error, contact security@yourorg.example. This simulation was authorised by your organisation and is part of an approved security awareness program.
+      </footer>
+    </section>
+  </div>
+
+<script>
+/*
+  How this works:
+  - The email link that brought the user here should include a token parameter, e.g.:
+      https://training.example/welcome?token=abc123
+  - This script reads the token and appends it to your consent form URL plus the user's choice (yes/no).
+  - Replace the two URLs below with your actual consent form and training URLs.
+*/
+
+const CONSENT_FORM_URL = "https://example.com/consent-form"; // <-- replace with your form URL
+const TRAINING_URL = "https://yourorg.example/training-module"; // <-- replace with your training URL
+
+function getQueryParam(name) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name) || "";
+}
+
+// read token (or fall back to a generated reference)
+let token = getQueryParam("token");
+if (!token) {
+  // if no token, create a short pseudo-token for traceability (non-identifying)
+  const rand = Math.random().toString(36).slice(2,9);
+  token = "anon-" + rand;
+}
+
+document.getElementById("tokenDisplay").textContent = token;
+
+// Build consent links with token and choice: we append safe query params
+function makeConsentUrl(choice) {
+  // choice should be 'yes' or 'no'
+  const url = new URL(CONSENT_FORM_URL);
+  // append token and choice as query parameters for easy CSV cleaning
+  url.searchParams.set("token", token);
+  url.searchParams.set("consent", choice);
+  // optional: include a timestamp for extra traceability
+  url.searchParams.set("ts", new Date().toISOString());
+  return url.toString();
+}
+
+// attach to buttons
+document.getElementById("yesBtn").href = makeConsentUrl("yes");
+document.getElementById("noBtn").href  = makeConsentUrl("no");
+document.getElementById("trainBtn").href = TRAINING_URL;
+</script>
+</body>
+</html>
