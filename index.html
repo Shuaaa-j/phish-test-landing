@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Security Awareness — Research Simulation</title>
 <style>
-  :root { --accent:#2b7cff; --muted:#666; --card:#f6f8fc; --success:#28a745; }
+  :root { --accent:#2b7cff; --muted:#666; --card:#f6f8fc; }
   body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background-color: #e9ecef;
@@ -33,15 +33,17 @@
     margin-bottom: 20px;
   }
   .muted { color:var(--muted); font-size:0.95rem; line-height: 1.5; }
-  .token-section { margin:20px 0; }
+  .token-section { margin:20px 0; padding: 15px; background: #fffdf0; border: 1px solid #ffeeba; border-radius: 8px; }
   .token { 
     padding:10px 15px; 
-    background:#f1f3f5; 
+    background:#fff; 
     border-radius:6px; 
-    border:1px dashed #adb5bd; 
+    border:2px solid var(--accent); 
     font-family: 'Courier New', monospace; 
     font-weight: bold;
+    font-size: 1.2rem;
     display:inline-block; 
+    margin-top: 5px;
   }
   .tips { margin-top:20px; padding: 15px; background: var(--card); border-radius: 8px; }
   ul { margin:10px 0 0 20px; padding: 0; }
@@ -54,13 +56,13 @@
     font-weight:600; 
     display:inline-block; 
     transition: transform 0.2s;
-    cursor: pointer;
-    border: none;
+    text-align: center;
+    flex: 1;
   }
   .btn:active { transform: scale(0.98); }
-  .yes { background:var(--accent); color:#fff; flex: 1; text-align: center; }
-  .no { background:#fff; border:1px solid #ced4da; color:#495057; flex: 1; text-align: center; }
-  .small { font-size:0.85rem; color:var(--muted); margin-top:20px; border-top: 1px solid #eee; pt: 15px; }
+  .yes { background:var(--accent); color:#fff; }
+  .no { background:#fff; border:1px solid #ced4da; color:#495057; }
+  .small { font-size:0.85rem; color:var(--muted); margin-top:20px; border-top: 1px solid #eee; padding-top: 15px; }
   footer { margin-top:20px; color:var(--muted); font-size:0.8rem; text-align: center; }
 </style>
 </head>
@@ -72,35 +74,35 @@
 
     <section class="card">
       <div class="highlight-box">
-        <p><strong>This was a simulated phishing test for a research study.</strong> No actual systems were accessed, and your passwords were NOT collected. This is a safe, educational landing page.</p>
+        <p><strong>This was a simulated phishing test for a research study.</strong> No systems were harmed. This is a safe landing page for educational and research purposes.</p>
       </div>
 
       <p class="muted">
-        As part of <strong>Joshua Renzo Gofulco's</strong> study on "The Paradox of Digital Literacy," we are measuring how localized social engineering impacts young adults in the UAE. 
-        To help our research, please click below to confirm whether we may include this interaction (anonymously) in our data.
+        As part of <strong>Joshua Renzo Gofulco's</strong> study on digital literacy, we are measuring real-world responses to localized digital lures in the UAE. To help our study, please confirm if we can use this interaction in our data.
       </p>
 
       <div class="token-section">
-        <span class="muted">Your unique reference token:</span><br>
-        <div class="token" id="tokenDisplay">Generating...</div>
+        <strong>Important: Please remember or copy this token:</strong><br>
+        <div class="token" id="tokenDisplay">ANON</div>
+        <p style="font-size: 0.8rem; margin-top: 5px; color: #856404;">You will need to enter this code on the next page.</p>
       </div>
 
       <div class="tips">
         <strong>How to stay safe in the UAE:</strong>
         <ul>
-          <li><strong>Verify the Sender:</strong> Phishing emails often use "look-alike" domains (e.g., .bsu-edu.com instead of .ac.uk).</li>
-          <li><strong>Check the Link:</strong> Hover over buttons to see the actual URL before clicking.</li>
-          <li><strong>Institutional Trust:</strong> Official entities like UAE PASS or Banks will never ask for your password via an email link.</li>
+          <li><strong>Check the Sender:</strong> Look for slightly misspelled domains.</li>
+          <li><strong>Hover Before Clicking:</strong> Always check the real URL destination.</li>
+          <li><strong>Official Channels:</strong> Use official apps like UAE PASS directly rather than clicking email links.</li>
         </ul>
       </div>
 
       <div class="actions">
-        <a id="yesBtn" class="btn yes">YES — Include my data</a>
-        <a id="noBtn" class="btn no">NO — Do not use my data</a>
+        <a id="yesBtn" href="#" class="btn yes">YES — Continue to Consent</a>
+        <a id="noBtn" href="#" class="btn no">NO — Exit Study</a>
       </div>
 
       <div class="small">
-        Clicking either button will take you to a 30-second Google Form to finalize your choice. Your token will be automatically attached to your response for reference.
+        Clicking either button will take you to a 30-second Google Form. Please enter your reference token there to finalize your choice.
       </div>
 
       <footer>
@@ -112,32 +114,23 @@
 
 <script>
 
-const GFORM_BASE_URL = "https://forms.gle/k56fVazjqUfp2wdx5"; 
-const CONSENT_ENTRY_ID = "entry.123456789"; 
-const TOKEN_ENTRY_ID = "entry.987654321";   
+const GFORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdKLzuWl-_2VzzSwWZEaJKf_t41YrGZT1bcLQNVU-tr8opbDA/viewform?usp=dialog";
 
 function getQueryParam(name) {
   const params = new URLSearchParams(window.location.search);
   return params.get(name) || "";
 }
 
+// Get token from URL (e.g., ?token=P1)
 let token = getQueryParam("token");
 if (!token) {
-  const rand = Math.random().toString(36).slice(2, 9).toUpperCase();
-  token = "UAE-" + rand;
+  token = "ANON"; 
 }
 document.getElementById("tokenDisplay").textContent = token;
 
-function makeConsentUrl(choice) {
-  const url = new URL(GFORM_BASE_URL);
-  url.searchParams.set("usp", "pp_url");
-  url.searchParams.set(CONSENT_ENTRY_ID, choice);
-  url.searchParams.set(TOKEN_ENTRY_ID, token);
-  return url.toString();
-}
-
-document.getElementById("yesBtn").href = makeConsentUrl("Yes");
-document.getElementById("noBtn").href  = makeConsentUrl("No");
+// Set both buttons to simply open the Google Form
+document.getElementById("yesBtn").href = GFORM_URL;
+document.getElementById("noBtn").href = GFORM_URL;
 </script>
 </body>
 </html>
